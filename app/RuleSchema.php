@@ -29,7 +29,7 @@ class RuleSchema
             ]
         ];
     }
-    public function lineConditionWin(Ticket $ticket)
+    public static function lineConditionWin(Ticket $ticket)
     {
         foreach ($ticket->getTicket() as $block)
         {
@@ -44,22 +44,22 @@ class RuleSchema
         return false;
     }
 
-    public function blockConditionWin(Ticket $ticket)
+    public static function blockConditionWin(Ticket $ticket)
     {
         $ticket_blocks = $ticket->getTicket();
 
         $last_block = end($ticket_blocks);
-        $checkSum = $this->checkBlockStatus($last_block);
+        $checkSum = RuleSchema::checkBlockStatus($last_block);
         if (!$checkSum) {
             return true;
         }
 
         $first_block = reset($ticket_blocks);
-        $checkSum = $this->checkBlockStatus($first_block);
+        $checkSum = RuleSchema::checkBlockStatus($first_block);
         return !$checkSum;
     }
 
-    private function checkBlockStatus($block)
+    private static function checkBlockStatus($block)
     {
         $sum = 0;
         foreach ($block as $line)
@@ -69,14 +69,14 @@ class RuleSchema
         return $sum;
     }
 
-    public function twoBlockConditionWin(Ticket $ticket)
+    public static function twoBlockConditionWin(Ticket $ticket)
     {
         $ticket_blocks = $ticket->getTicket();
         $blockStatuses = [];
 
         foreach ($ticket_blocks as $block)
         {
-            $blockStatuses[] = $this->checkBlockStatus($block);
+            $blockStatuses[] = RuleSchema::checkBlockStatus($block);
         }
 
         $completedBlocks = array_filter($blockStatuses, function($status) {

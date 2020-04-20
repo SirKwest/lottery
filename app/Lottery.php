@@ -91,4 +91,22 @@ class Lottery
             }
         } while (false);
     }
+
+    public function getTopWinners($size = 10)
+    {
+        if (empty($this->winners)) {
+            return [];
+        }
+        $winners = [];
+        foreach ($this->winners as $winnersBySpecificRule) {
+            $winners = array_merge($winners, $winnersBySpecificRule);
+        }
+        usort($winners, function ($a, $b) {
+            return $a['prize'] > $b['prize'];
+        });
+
+        if ($size) {
+            return array_slice($winners, $size);
+        }
+    }
 }
