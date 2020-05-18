@@ -4,6 +4,8 @@
 namespace App;
 
 
+use Illuminate\Support\Facades\Log;
+
 class RuleSchema
 {
     public function getSchema()
@@ -40,7 +42,7 @@ class RuleSchema
                 }
             }
         }
-
+        Log::info('Line is not win');
         return false;
     }
 

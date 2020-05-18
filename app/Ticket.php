@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Ticket extends Model
 {
@@ -21,12 +22,12 @@ class Ticket extends Model
 
     public function generateTicket($numberOfBlocks = 3, $numberOfLines = 3)
     {
+        Log::info('Entering generate ticket function');
         $this->numberOfLines = $numberOfLines;
         $this->numberOfBlocks = $numberOfBlocks;
         $ticket = [];
-        for($i = 1; $i <= $this->numberOfBlocks; $i++)
-        {
-            $ticket[$i] = $this->generateBlock($this->$numberOfLines);
+        for($i = 1; $i <= $this->numberOfBlocks; $i++) {
+            $ticket[$i] = $this->generateBlock($this->numberOfLines);
         }
         $this->numbers = $ticket;
         return $ticket;
@@ -34,7 +35,8 @@ class Ticket extends Model
 
     public function mark($number)
     {
-        foreach ($this->numbers as $block)
+        Log::debug('Marking number '. $number);
+        foreach ($this->numbers as &$block)
         {
             foreach ($block as &$line)
             {
@@ -44,10 +46,13 @@ class Ticket extends Model
             }
             unset($line);
         }
+        unset($block);
     }
 
     private function generateBlock($numberOfLines)
     {
+        Log::info('Entering generate block function');
+        Log::debug('number of lines: ' . $numberOfLines);
         $block = [];
         for($i = 1; $i <= $numberOfLines; $i++)
         {
@@ -58,6 +63,7 @@ class Ticket extends Model
 
     private function generateLine()
     {
+        Log::info('Entering generate line function');
         $columns = [];
         while (count($columns) != 5) {
             $new_column = rand(1, 9);
@@ -68,5 +74,15 @@ class Ticket extends Model
 
         ksort($columns);
         return $columns;
+    }
+
+    public function printTicket()
+    {
+        for($i = 1; $i <= $this->numberOfBlocks; $i++) {
+            echo 'Printing Block ' . $i;
+            for($j = 1; $j <= $this->numberOfLines; $j++) {
+                var_dump($this->numbers[$i][$j]);
+            }
+        }
     }
 }
